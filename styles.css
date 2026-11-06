@@ -100,11 +100,11 @@
 @media(prefers-reduced-motion:reduce){.game-stage .game-fox,.game-stage .fox-tail,.game-stage .fox-tail-tip,.game-stage .fox-ear-left,.game-stage .fox-ear-right,.game-stage .fox-eyes,.game-stage .fox-paw,.game-stage .scene-sparkle{animation:none!important}}
 
 /* Keep the Zhuyin tone mark beside the middle of its vertical sound symbols. */
-.game-stage .zhuyin-tile{position:relative;display:inline-block;writing-mode:horizontal-tb;min-width:29px;width:29px;height:50px;min-height:50px;overflow:visible}
-.game-stage .zhuyin-symbols{position:absolute;left:0;top:50%;display:block;writing-mode:vertical-rl;text-orientation:upright;transform:translateY(-50%);font-size:14px;line-height:1.02;white-space:nowrap}
-.game-stage .tone-mark{position:absolute;right:0;top:50%;transform:translateY(-50%);display:block;color:#c77c19;font-size:13px;font-weight:1000;line-height:1;writing-mode:horizontal-tb}
-.game-stage .word-tile.target .tone-mark{color:#8b5d17}
-@media(max-width:560px){.game-stage .zhuyin-tile{min-width:25px;width:25px;height:42px;min-height:42px}.game-stage .zhuyin-symbols{font-size:12px}.game-stage .tone-mark{font-size:12px}}
+.game-stage .zhuyin-tile{position:relative;display:inline-block;writing-mode:horizontal-tb;min-width:39px;width:39px;height:58px;min-height:58px;overflow:visible}
+.game-stage .zhuyin-symbols{position:absolute;left:0;top:50%;display:block;writing-mode:vertical-rl;text-orientation:upright;transform:translateY(-50%);font-size:18px;font-weight:900;line-height:1.02;white-space:nowrap}
+.game-stage .tone-mark{position:absolute;right:-3px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:25px;height:25px;border:2px solid white;border-radius:50%;background:#ffdf70;color:#70420b;font-size:21px;font-weight:1000;line-height:1;writing-mode:horizontal-tb;text-shadow:0 1px #fff;box-shadow:0 2px 5px #493d8240}
+.game-stage .word-tile.target .tone-mark{background:#ffb63f;color:#5f3500;box-shadow:0 0 0 3px #ffe8a5,0 3px 8px #493d8250;transform:translateY(-50%) scale(1.12)}
+@media(max-width:560px){.game-stage .zhuyin-tile{min-width:33px;width:33px;height:48px;min-height:48px}.game-stage .zhuyin-symbols{font-size:15px}.game-stage .tone-mark{right:-2px;width:22px;height:22px;font-size:18px}}
 
 /* Clear balloon feedback and a ten-step downhill fox adventure. */
 .game-stage .balloon-btn.hit .balloon{animation:balloonBigHit .95s cubic-bezier(.15,.8,.25,1) forwards!important;filter:drop-shadow(0 0 13px #ffe56a)}
