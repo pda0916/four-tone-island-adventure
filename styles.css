@@ -195,3 +195,16 @@
   .reading-pill .dict-symbols{font-size:19px}
   .reading-pill .dict-tone{font-size:24px}
 }
+.game-stage .balloon-btn.tone-route-option{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;gap:5px}
+.game-stage .tone-route-option .choice-object{flex:0 0 27px;height:27px}
+.game-stage .tone-route-option .tone-route-svg{flex:0 0 72px;height:72px;margin:0}
+.game-stage .tone-route-option .route-label{flex:0 0 auto;margin-top:0}
+.game-stage .balloon-btn.tone-route-option.mode-0{display:flex;gap:5px;padding-top:10px}
+.game-stage .tone-route-option.mode-0 .tone-route-svg{flex-basis:78px;height:78px;margin-top:5px}
+@media(max-width:560px){
+  .game-stage .balloon-btn.tone-route-option{gap:4px}
+  .game-stage .tone-route-option .choice-object{flex-basis:22px;height:22px}
+  .game-stage .tone-route-option .tone-route-svg{flex-basis:58px;height:58px}
+  .game-stage .balloon-btn.tone-route-option.mode-0{padding-top:8px}
+  .game-stage .tone-route-option.mode-0 .tone-route-svg{flex-basis:68px;height:68px}
+}
