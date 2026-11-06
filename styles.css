@@ -101,7 +101,7 @@
 
 /* Keep the Zhuyin tone mark beside the middle of its vertical sound symbols. */
 .game-stage .zhuyin-tile{position:relative;display:inline-block;writing-mode:horizontal-tb;min-width:29px;width:29px;height:50px;min-height:50px;overflow:visible}
-.game-stage .zhuyin-symbols{position:absolute;left:0;top:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:translateY(-50%);font-size:14px;line-height:1.02;white-space:nowrap}
+.game-stage .zhuyin-symbols{position:absolute;left:0;top:50%;display:block;writing-mode:vertical-rl;text-orientation:upright;transform:translateY(-50%);font-size:14px;line-height:1.02;white-space:nowrap}
 .game-stage .tone-mark{position:absolute;right:0;top:50%;transform:translateY(-50%);display:block;color:#c77c19;font-size:13px;font-weight:1000;line-height:1;writing-mode:horizontal-tb}
 .game-stage .word-tile.target .tone-mark{color:#8b5d17}
 @media(max-width:560px){.game-stage .zhuyin-tile{min-width:25px;width:25px;height:42px;min-height:42px}.game-stage .zhuyin-symbols{font-size:12px}.game-stage .tone-mark{font-size:12px}}
