@@ -63,3 +63,38 @@
 @keyframes aimShot{0%,100%{transform:rotate(-35deg) scale(1)}40%{transform:rotate(-60deg) scale(1.14)}70%{transform:rotate(-20deg) scale(.94)}}
 @media(max-width:800px){.game-stage{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(130px,auto) minmax(180px,auto) auto auto;min-height:720px}.game-stage .game-hud{grid-column:1;grid-row:1}.game-stage .question-card{grid-column:1;grid-row:2}.game-stage .balloons{grid-column:1;grid-row:3;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:0}.game-stage .balloon-btn{min-height:126px;padding:4px 1px}.game-stage .balloon{width:82px;height:80px}.game-stage .balloon-mark{width:47px;height:45px}.game-stage .fox-stage{grid-column:1;grid-row:4;min-height:190px}.game-stage .fox-stage .game-fox{width:112px}.fox-launcher{right:calc(50% - 94px);bottom:45px;font-size:25px}.game-stage .feedback{grid-column:1;grid-row:5}.game-stage .game-actions{grid-column:1;grid-row:6}}
 @media(max-width:560px){.game-stage{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(110px,auto) minmax(160px,auto) auto auto;min-height:700px;padding:10px}.game-stage .game-hud{grid-column:1;grid-row:1}.game-stage .question-card{grid-column:1;grid-row:2;padding:12px 7px}.game-stage .balloons{grid-column:1;grid-row:3;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin:0 auto}.game-stage .balloon-btn{min-height:111px;padding:3px 0}.game-stage .balloon{width:65px;height:65px}.game-stage .balloon-mark{width:40px;height:38px}.game-stage .balloon-label{font-size:9px;line-height:1.35}.game-stage .balloon-basket{width:24px}.game-stage .fox-stage{grid-column:1;grid-row:4;min-height:167px}.game-stage .fox-stage .game-fox{width:92px}.game-stage .fox-stage .speech{width:auto;max-width:92%;font-size:10px;padding:7px 9px}.game-stage .fox-stage .voice-wave{height:20px}.fox-launcher{right:calc(50% - 78px);bottom:38px;font-size:21px}.game-stage .feedback{grid-column:1;grid-row:5}.game-stage .game-actions{grid-column:1;grid-row:6}.question-tools{gap:4px}.question-tools .listen{padding:8px 8px;font-size:10px}}
+/* Vertical Bopomofo beside each Han character */
+.game-stage .word-tiles{align-items:center;gap:10px}
+.game-stage .word-tile{flex-direction:row;align-items:center;justify-content:center;gap:5px;min-width:76px;min-height:70px;padding:6px 8px}
+.game-stage .word-char{font-size:40px}
+.game-stage .zhuyin-tile{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;text-orientation:upright;min-width:20px;width:20px;height:50px;min-height:50px;line-height:1.06;letter-spacing:0;font-size:14px;white-space:nowrap}
+.game-stage .word-tile.target .zhuyin-tile{color:#8b5d17}
+@media(max-width:560px){.game-stage .word-tiles{gap:6px}.game-stage .word-tile{min-width:62px;min-height:58px;gap:4px;padding:4px 5px}.game-stage .word-char{font-size:31px}.game-stage .zhuyin-tile{min-width:17px;width:17px;height:42px;min-height:42px;font-size:12px}}
+
+/* A lively fox companion: bouncing, blinking, tail swishes, and celebrates each shot. */
+.game-stage .game-fox{animation:foxAdventure 1.65s ease-in-out infinite;}
+.game-stage .fox-tail{transform-box:fill-box;transform-origin:75% 68%;animation:tailSwish .72s ease-in-out infinite alternate;}
+.game-stage .fox-tail-tip{transform-box:fill-box;transform-origin:20% 60%;animation:tailTip .72s ease-in-out infinite alternate;}
+.game-stage .fox-ear-left{transform-box:fill-box;transform-origin:80% 95%;animation:earFlick 3.1s ease-in-out infinite;}
+.game-stage .fox-ear-right{transform-box:fill-box;transform-origin:20% 95%;animation:earFlick 3.1s ease-in-out -1.4s infinite;}
+.game-stage .fox-eyes{transform-box:fill-box;transform-origin:center;animation:foxBlink 4.2s ease-in-out infinite;}
+.game-stage .fox-paw{transform-box:fill-box;transform-origin:center;animation:pawWiggle .8s ease-in-out infinite alternate;}
+.game-stage .fox-paw-right{animation-delay:-.4s}
+.game-stage.is-speaking .game-fox{animation:foxTalkHop .62s ease-in-out infinite alternate;}
+.game-stage.round-correct .game-fox{animation:foxWinDance .48s ease-in-out 3;}
+.game-stage.round-correct .fox-tail{animation:tailHappy .3s ease-in-out infinite alternate;}
+.game-stage.round-miss .game-fox{animation:foxOops .42s ease-in-out 2;}
+.game-stage .scene-sparkle{animation:foxSparkle 1.8s ease-in-out infinite alternate;}
+.game-stage .sparkle-b{animation-delay:-.9s}
+@keyframes foxAdventure{0%,100%{transform:translateY(0) rotate(-1deg)}48%{transform:translateY(-8px) rotate(1.5deg)}70%{transform:translateY(-3px) rotate(0)}}
+@keyframes tailSwish{from{transform:rotate(-14deg)}to{transform:rotate(16deg)}}
+@keyframes tailTip{from{transform:rotate(-9deg)}to{transform:rotate(12deg)}}
+@keyframes earFlick{0%,78%,100%{transform:rotate(0)}84%{transform:rotate(-12deg)}90%{transform:rotate(5deg)}}
+@keyframes foxBlink{0%,43%,47%,100%{transform:scaleY(1)}45%{transform:scaleY(.12)}}
+@keyframes pawWiggle{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-3px) rotate(6deg)}}
+@keyframes foxTalkHop{from{transform:translateY(0) rotate(-2deg) scale(1)}to{transform:translateY(-9px) rotate(2deg) scale(1.035)}}
+@keyframes foxWinDance{0%,100%{transform:translateY(0) rotate(0) scale(1)}45%{transform:translateY(-16px) rotate(-8deg) scale(1.08)}75%{transform:translateY(-7px) rotate(7deg) scale(1.03)}}
+@keyframes foxOops{0%,100%{transform:translateX(0) rotate(0)}35%{transform:translateX(-6px) rotate(-5deg)}70%{transform:translateX(5px) rotate(4deg)}}
+@keyframes tailHappy{from{transform:rotate(-30deg)}to{transform:rotate(35deg)}}
+@keyframes foxSparkle{from{transform:translateY(2px) rotate(-18deg) scale(.8);opacity:.55}to{transform:translateY(-9px) rotate(24deg) scale(1.25);opacity:1}}
+@media(prefers-reduced-motion:reduce){.game-stage .game-fox,.game-stage .fox-tail,.game-stage .fox-tail-tip,.game-stage .fox-ear-left,.game-stage .fox-ear-right,.game-stage .fox-eyes,.game-stage .fox-paw,.game-stage .scene-sparkle{animation:none!important}}
