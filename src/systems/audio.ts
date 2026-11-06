@@ -1,5 +1,6 @@
 export class AudioManager {
   private ctx: AudioContext | null = null;
+  private currentClip: HTMLAudioElement | null = null;
   private readonly storageKey = 'tone-island-audio-v1';
   enabled = localStorage.getItem(this.storageKey) !== 'off';
 
@@ -9,10 +10,20 @@ export class AudioManager {
     if (this.ctx?.state === 'suspended') void this.ctx.resume();
   }
 
-  toggle() { this.enabled = !this.enabled; localStorage.setItem(this.storageKey, this.enabled ? 'on' : 'off'); return this.enabled; }
+  toggle() {
+    this.enabled = !this.enabled;
+    localStorage.setItem(this.storageKey, this.enabled ? 'on' : 'off');
+    if (!this.enabled) this.stop();
+    return this.enabled;
+  }
+
+  stop() {
+    if (this.currentClip) { this.currentClip.pause(); this.currentClip.currentTime = 0; this.currentClip = null; }
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  }
 
   speak(text: string, rate = 0.78): boolean {
-    if (!this.enabled) return true;
+    if (!this.enabled) return false;
     if (!('speechSynthesis' in window)) return false;
     const voices = speechSynthesis.getVoices();
     const voice = voices.find(v => v.lang.toLowerCase() === 'zh-tw') ?? voices.find(v => v.lang.toLowerCase().startsWith('zh'));
@@ -22,6 +33,21 @@ export class AudioManager {
     utterance.lang = voice.lang; utterance.voice = voice; utterance.rate = rate; utterance.pitch = 1.02;
     speechSynthesis.speak(utterance);
     return true;
+  }
+
+  async sayWord(text: string, file: string): Promise<'bundled' | 'device' | 'muted' | null> {
+    if (!this.enabled) return 'muted';
+    const clip = new Audio(`${import.meta.env.BASE_URL}audio/words/${encodeURIComponent(file)}`);
+    clip.preload = 'auto'; clip.volume = 0.9;
+    try {
+      this.stop(); this.currentClip = clip;
+      await clip.play();
+      clip.onended = () => { if (this.currentClip === clip) this.currentClip = null; };
+      return 'bundled';
+    } catch {
+      if (this.currentClip === clip) this.currentClip = null;
+      return this.speak(text) ? 'device' : null;
+    }
   }
 
   tone(frequency: number, duration = 0.12, wave: OscillatorType = 'sine') {

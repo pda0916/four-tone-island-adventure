@@ -154,12 +154,11 @@ export class ForestScene extends Phaser.Scene {
   private start() {
     audio.unlock(); this.phase = 'play'; this.index = 0; this.stars = 0; this.firstTry = []; this.triedThisWord = false;
     this.round = makeRound(Date.now(), 10);
-    this.soundWarning = this.add.text(0,0,'語音由裝置提供；不同裝置的聲音可能不同。', { fontFamily:'Noto Sans TC, sans-serif', fontSize:'13px', color:'#385b73', backgroundColor:'#ffffffaa', padding:{ x:8,y:5 } }).setDepth(25);
+    this.soundWarning = this.add.text(0,0,'題目附有單字示範音，點喇叭可以重聽。', { fontFamily:'Noto Sans TC, sans-serif', fontSize:'13px', color:'#385b73', backgroundColor:'#ffffffaa', padding:{ x:8,y:5 } }).setDepth(25);
     this.layout();
-    if (!audio.speak('聽聽這個字的聲音，然後用手指從左往右畫出聲調。')) {
-      this.soundWarning.setText('裝置沒有中文語音時，請由家長檢查瀏覽器語音設定。');
-    }
-    this.sayCurrent();
+    if (audio.speak('聽聽這個字的聲音，再從左邊畫出它的聲調。')) {
+      this.time.delayedCall(2400, () => this.sayCurrent());
+    } else this.sayCurrent();
   }
 
   private renderQuestion() {
@@ -181,22 +180,30 @@ export class ForestScene extends Phaser.Scene {
     this.text(cx + this.width * .11, this.height * .82, this.mode === '幼幼' ? '金色路線會陪你一起畫' : '線條畫長一點，讓小龍看清楚喔', narrow ? 13 : 16, '#56718a', false);
     this.soundWarning.setPosition(10, this.height - 30);
     this.soundWarning.setFontSize(narrow ? 11 : 13);
-    this.renderHintControl(); this.renderReplayControl();
+    this.renderJumpControl(); this.renderHintControl(); this.renderReplayControl();
     if (this.mode === '幼幼') this.drawGuide(this.round[this.index]!);
-    this.sayCurrent();
   }
 
   private renderReplayControl() {
     this.button(this.width * .84, this.height * .92, '🔊 重聽', () => this.sayCurrent(), Math.min(150,this.width*.33), this.width < 640 ? 16 : 18);
   }
+  private renderJumpControl() {
+    this.button(this.width * .16, this.height * .92, '⬆ 跳跳', () => this.jump(), Math.min(150,this.width*.33), this.width < 640 ? 16 : 18);
+  }
   private renderHintControl() {
-    if (this.mode === '標準') this.button(this.width * .16, this.height * .92, '✨ 示範', () => this.drawGuide(this.round[this.index]!), Math.min(150,this.width*.33), this.width < 640 ? 16 : 18);
+    if (this.mode === '標準') this.button(this.width * .40, this.height * .92, '✨ 示範', () => this.drawGuide(this.round[this.index]!), Math.min(150,this.width*.33), this.width < 640 ? 16 : 18);
   }
 
   private sayCurrent() {
     if (this.phase !== 'play') return;
     const card = this.round[this.index]!;
-    if (!audio.speak(card.word)) this.soundWarning?.setText('裝置中文語音未能播放；請點重聽或由家長檢查語音設定。');
+    const questionIndex = this.index;
+    void audio.sayWord(card.word, card.audio).then(result => {
+      if (this.phase !== 'play' || this.index !== questionIndex) return;
+      if (result === 'bundled') this.soundWarning?.setText('正在播放本題附上的單字示範音。');
+      else if (result === 'device') this.soundWarning?.setText('正在使用裝置提供的中文語音。');
+      else if (result === null) this.soundWarning?.setText('聲音暫時無法播放，請再點一次重聽。');
+    });
   }
 
   private pathFor(tone: Tone): Point[] {

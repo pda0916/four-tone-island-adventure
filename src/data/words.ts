@@ -1,20 +1,18 @@
 export type Tone = 1 | 2 | 3 | 4;
-export type WordCard = { word: string; zhuyin: string; tone: Tone; syllable: string; };
+export type WordCard = { word: string; zhuyin: string; tone: Tone; syllable: string; audio: string; };
 
 // 單字及注音以教育部《國語辭典簡編本》常用讀音為基準；正式上線前仍需語音人員逐檔覆核。
 export const words: WordCard[] = [
-  { word: '花', zhuyin: 'ㄏㄨㄚ', tone: 1, syllable: 'huā' },
-  { word: '天', zhuyin: 'ㄊㄧㄢ', tone: 1, syllable: 'tiān' },
-  { word: '星', zhuyin: 'ㄒㄧㄥ', tone: 1, syllable: 'xīng' },
-  { word: '雲', zhuyin: 'ㄩㄣˊ', tone: 2, syllable: 'yún' },
-  { word: '桃', zhuyin: 'ㄊㄠˊ', tone: 2, syllable: 'táo' },
-  { word: '魚', zhuyin: 'ㄩˊ', tone: 2, syllable: 'yú' },
-  { word: '雨', zhuyin: 'ㄩˇ', tone: 3, syllable: 'yǔ' },
-  { word: '草', zhuyin: 'ㄘㄠˇ', tone: 3, syllable: 'cǎo' },
-  { word: '鳥', zhuyin: 'ㄋㄧㄠˇ', tone: 3, syllable: 'niǎo' },
-  { word: '兔', zhuyin: 'ㄊㄨˋ', tone: 4, syllable: 'tù' },
-  { word: '樹', zhuyin: 'ㄕㄨˋ', tone: 4, syllable: 'shù' },
-  { word: '月', zhuyin: 'ㄩㄝˋ', tone: 4, syllable: 'yuè' },
+  // 隨專案附上的九個合成示範音可離線播放，不依賴裝置安裝中文語音。
+  { word: '媽', zhuyin: 'ㄇㄚ', tone: 1, syllable: 'mā', audio: 'mama.mp3' },
+  { word: '麻', zhuyin: 'ㄇㄚˊ', tone: 2, syllable: 'má', audio: 'ma2.mp3' },
+  { word: '馬', zhuyin: 'ㄇㄚˇ', tone: 3, syllable: 'mǎ', audio: 'ma3.mp3' },
+  { word: '罵', zhuyin: 'ㄇㄚˋ', tone: 4, syllable: 'mà', audio: 'ma4.mp3' },
+  { word: '爸', zhuyin: 'ㄅㄚˋ', tone: 4, syllable: 'bà', audio: 'ba4.mp3' },
+  { word: '師', zhuyin: 'ㄕ', tone: 1, syllable: 'shī', audio: 'shi1.mp3' },
+  { word: '事', zhuyin: 'ㄕˋ', tone: 4, syllable: 'shì', audio: 'shi4.mp3' },
+  { word: '答', zhuyin: 'ㄉㄚˊ', tone: 2, syllable: 'dá', audio: 'da2.mp3' },
+  { word: '大', zhuyin: 'ㄉㄚˋ', tone: 4, syllable: 'dà', audio: 'da4.mp3' },
 ];
 
 export const toneNames: Record<Tone, string> = { 1: '一聲', 2: '二聲', 3: '三聲', 4: '四聲' };
@@ -22,12 +20,18 @@ export const toneNames: Record<Tone, string> = { 1: '一聲', 2: '二聲', 3: '�
 export function makeRound(seed: number, count = 10): WordCard[] {
   let state = seed >>> 0;
   const next = () => { state = (1664525 * state + 1013904223) >>> 0; return state / 0x100000000; };
-  const pool = [...words];
+  const shuffled = <T>(input: T[]) => {
+    const a = [...input];
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(next() * (i + 1)); [a[i], a[j]] = [a[j]!, a[i]!]; }
+    return a;
+  };
+  const groups = new Map<Tone, WordCard[]>([1, 2, 3, 4].map(t => [t as Tone, shuffled(words.filter(w => w.tone === t))]));
   const out: WordCard[] = [];
-  while (out.length < count) {
-    if (!pool.length) pool.push(...words);
-    const i = Math.floor(next() * pool.length);
-    out.push(pool.splice(i, 1)[0]!);
+  while (out.length < count) for (const tone of shuffled([1, 2, 3, 4] as Tone[])) {
+    if (out.length >= count) break;
+    const group = groups.get(tone)!;
+    if (!group.length) group.push(...shuffled(words.filter(w => w.tone === tone)));
+    out.push(group.shift()!);
   }
   return out;
 }
