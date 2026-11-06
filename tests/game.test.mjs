@@ -1,0 +1,19 @@
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+const code=readFileSync(new URL('../index.html',import.meta.url),'utf8').split('<script>')[1].split('</script>')[0];
+function harness(){
+ const elements=new Map(),store=new Map();
+ const context2d=new Proxy({}, {get:()=>()=>({addColorStop(){}}),set:()=>true});
+ const element=key=>{if(!elements.has(key))elements.set(key,{textContent:'',innerHTML:'',hidden:false,style:{},addEventListener(){},getContext:()=>context2d,setPointerCapture(){},getBoundingClientRect:()=>({left:0,top:0,width:640,height:200,right:640,bottom:200})});return elements.get(key)};
+ const sandbox={document:{hidden:false,querySelector:element,querySelectorAll:()=>[],addEventListener(){}},localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v)},window:{},Audio:class{play(){return Promise.resolve()}pause(){}},performance:{now:()=>0},setInterval(){},setTimeout(){},requestAnimationFrame(){},innerWidth:1280,innerHeight:720,devicePixelRatio:1,console};
+ sandbox.window=sandbox;let c=vm.createContext(sandbox);vm.runInContext(code,c);return {run:s=>vm.runInContext(s,c),element,store};
+}
+test('four islands reach all gates and castle through physics simulation',()=>{
+ for(let t=1;t<=4;t++){let h=harness();h.run(`start(${t})`);for(let i=0;i<3;i++){h.run("keys.ArrowRight=true; for(let n=0;n<1200&&scene==='play';n++)tick(1/90)");assert.equal(h.run('scene'),'task');assert.equal(h.run('task.card[2]'),t);h.run("resolve(true);scene='play';task=null");}h.run("keys.ArrowRight=true;for(let n=0;n<1000&&scene==='play';n++)tick(1/90)");assert.equal(h.run('scene'),'win');assert.equal(h.run(`save.complete.includes(${t})`),true)}
+});
+test('wrong attempts persist and correct retry never grants duplicate stars',()=>{let h=harness();h.run('start(2);openTask(world.gates[0]);resolve(false)');assert.equal(h.run('Object.keys(save.mistakes).length'),1);assert.equal(h.run('save.attempts[2]'),1);h.run('resolve(true);resolve(true)');assert.equal(h.run('save.stars'),3);assert.equal(h.run('save.correct[2]'),0);assert.ok(h.store.get('fox-tone-islands-v2'))});
+test('review needs two different rounds and empty review is safe',()=>{let h=harness();h.run('start(1,true)');assert.equal(h.run('scene'),'dialog');h.run('start(3);openTask(world.gates[0]);resolve(false);roundId=100;resolve(true)');assert.equal(h.run('Object.values(save.mistakes)[0].wins'),1);h.run('taskDone=false;resolve(true)');assert.equal(h.run('Object.values(save.mistakes)[0].wins'),1);h.run('taskDone=false;roundId=101;resolve(true)');assert.equal(h.run('Object.keys(save.mistakes).length'),0)});
+test('tracing accepts a correct route and rejects the opposite slope',()=>{for(let t of [1,2,3,4]){let h=harness();h.run(`start(${t});openTask(world.gates[0])`);let c=h.element('#trace');const event=(x,y)=>({clientX:x,clientY:y,pointerId:1,preventDefault(){}});let ys=x=>25+h.run(`contour(${t},${x})`)*150;c.onpointerdown(event(45,ys(0)));for(let i=1;i<=30;i++)c.onpointermove(event(45+i/30*550,ys(i/30)));c.onpointerup(event(595,ys(1)));assert.equal(h.run('taskDone'),true)}let h=harness();h.run('start(2);openTask(world.gates[0])');let c=h.element('#trace'),e=(x,y)=>({clientX:x,clientY:y,pointerId:1,preventDefault(){}});c.onpointerdown(e(45,40));for(let i=1;i<20;i++)c.onpointermove(e(45+i*28,40+i*7));c.onpointerup(e(595,180));assert.equal(h.run('taskDone'),false)});
+test('drag food resolves only when dropped inside the monster',()=>{let h=harness();h.run('start(1);openTask(world.gates[1])');h.element('#monster').getBoundingClientRect=()=>({left:400,right:600,top:20,bottom:180});let f=h.element('#food'),e=(x,y)=>({clientX:x,clientY:y,pointerId:1,preventDefault(){}});f.onpointerdown(e(30,80));f.onpointerup(e(70,80));assert.equal(h.run('taskDone'),false);f.onpointerdown(e(30,80));f.onpointermove(e(500,80));f.onpointerup(e(500,80));assert.equal(h.run('taskDone'),true)});
