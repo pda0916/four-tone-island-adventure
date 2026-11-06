@@ -131,3 +131,19 @@
 @keyframes answerBanner{from{opacity:0;transform:translateY(8px) scale(.8)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:560px){.game-stage .fox-stage .fox-stairs{right:8%;left:8%;height:76px}.game-stage .fox-stage{min-height:230px}.game-stage .fox-stage .game-fox{bottom:var(--fox-bottom,15px)}.game-stage .fox-launcher{left:calc(var(--fox-left,50%) + 30px);bottom:calc(var(--fox-bottom,15px) + 34px);font-size:19px}.game-stage .fox-stage .stair-caption{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.game-stage .balloon-btn.hit:before,.game-stage .balloon-btn.miss-hit:before,.game-stage .balloon-btn.target-answer:before,.game-stage .feedback.answer-correct,.game-stage .feedback.answer-miss{animation:none!important}.game-stage .fox-stage .game-fox,.game-stage .fox-launcher{transition:none!important}}
+
+/* Make tone choices easy to see while listening to each question. */
+.game-stage .balloon-mark{width:68px;height:64px}
+.game-stage .balloon-mark svg{width:60px!important;height:52px!important}
+.game-stage .balloon-label{font-size:16px;line-height:1.35;text-shadow:0 1px white}
+.game-stage .balloon-basket{width:38px;height:28px;font-size:15px}
+.game-stage .zhuyin-symbols{font-size:20px}
+.game-stage .tone-mark{width:34px;height:34px;font-size:28px}
+@media(max-width:560px){
+  .game-stage .balloon-mark{width:46px;height:44px}
+  .game-stage .balloon-mark svg{width:42px!important;height:38px!important}
+  .game-stage .balloon-label{font-size:12px;line-height:1.25}
+  .game-stage .balloon-basket{width:31px;height:25px;font-size:13px}
+  .game-stage .zhuyin-symbols{font-size:17px}
+  .game-stage .tone-mark{width:30px;height:30px;font-size:24px}
+}
