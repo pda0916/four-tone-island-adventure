@@ -27,7 +27,7 @@ function spawn(){
  let fastSlot=Math.floor(level.count/3),tankSlot=Math.max(fastSlot+1,level.count-2);
  let kind=boss?'boss':s.levelWave>=4&&idx%6===tankSlot%6?'tank':s.levelWave>=2&&idx%4===fastSlot%4?'fast':'normal';
  let baseHp=boss?110+45*(s.wave-1)+(s.wave===4?120:0):kind==='tank'?48+8*(s.wave-1):kind==='fast'?20+5*(s.wave-1):30+8*(s.wave-1);
- let hp=Math.round(baseHp*(1+Math.floor((s.levelWave-1)/2)*.12));
+ let hp=Math.round(baseHp*Math.pow(1.2,s.levelWave-1));
  let speed=level.speed*(kind==='fast'?1.35:kind==='tank'?.76:kind==='boss'?.72:1)*Math.min(1.3,1+(s.levelWave-1)*.025);
  s.enemies.push({id:++s.nextId,card:c,kind,hp,max:hp,progress:0,speed,hit:0});s.spawned++;drawActors();playRecordedPrompt(c)
 }
