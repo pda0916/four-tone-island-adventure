@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 from pathlib import Path
@@ -11,7 +12,12 @@ import onnxruntime as ort
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL = Path(os.environ.get("TONE_GUARD_VOICE_MODEL", Path(gettempdir()) / "tone-guard-prime"))
-OUT = ROOT / "public/audio/taiwan-v1"
+parser = argparse.ArgumentParser()
+parser.add_argument("--speaker", choices=("xinran", "anchen", "bowen"), default="xinran")
+speaker = parser.parse_args().speaker
+speaker_id = {"xinran": 0, "anchen": 1, "bowen": 2}[speaker]
+folder = "taiwan-v1" if speaker == "xinran" else "taiwan-v1-" + speaker
+OUT = ROOT / "public/audio" / folder
 OUT.mkdir(parents=True, exist_ok=True)
 lex = json.loads((MODEL / "lexicon.json").read_text(encoding="utf-8"))
 ZHUYIN = [chr(c) for c in range(0x3105, 0x312a)]
@@ -85,7 +91,7 @@ for text, card in entries:
             ts += [0, 0]
     inputs = dict(x=np.array([x], dtype=np.int64), tone=np.array([ts], dtype=np.int64),
                   lang=np.zeros((1, len(x)), dtype=np.int64), x_lengths=np.array([len(x)], dtype=np.int64),
-                  sid=np.array([0], dtype=np.int64), noise_scale=np.array([.55], dtype=np.float32),
+                  sid=np.array([speaker_id], dtype=np.int64), noise_scale=np.array([.55], dtype=np.float32),
                   length_scale=np.array([1.12], dtype=np.float32))
     wav = session.run(None, inputs)[0].ravel()
     if not np.isfinite(wav).all() or np.max(np.abs(wav)) < .01 or not .2 < len(wav)/16000 < 12:
@@ -98,4 +104,4 @@ for text, card in entries:
     encoder.set_channels(1)
     encoder.set_quality(2)
     path.write_bytes(encoder.encode(pcm) + encoder.flush())
-print(f"{len(ids)} audio clips")
+print(f"{speaker}: {len(ids)} audio clips")
