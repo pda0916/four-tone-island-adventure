@@ -6,7 +6,7 @@
 .voice-option{display:grid;grid-template-columns:minmax(85px,1fr) auto auto;align-items:center;gap:6px;margin-top:6px}
 .voice-option button{min-height:44px;border:1px solid #a8c3c2;border-radius:9px;background:#fff;padding:4px 8px;white-space:nowrap}
 .voice-option button[aria-pressed="true"]{background:#cfe8ce;border-color:#4b794e}
-.voice-dialog{z-index:40}.voice-dialog .modal{width:min(100%,430px);max-height:calc(100dvh - 36px);overflow:auto}.voice-dialog .voice-chooser{margin:10px auto}.voice-note{display:block;margin-top:8px;line-height:1.35;color:#466b83}
+.voice-dialog{z-index:40}.voice-dialog .modal{width:min(100%,430px);max-height:calc(100dvh - 36px);overflow:auto}.voice-dialog .voice-chooser{margin:10px auto}.voice-style-option{grid-template-columns:1fr auto}.voice-note{display:block;margin-top:8px;line-height:1.35;color:#466b83}
 </style></head><body><main id="app"></main><script>
 // [目標字, 目標注音, 聲調, 題目語境]
 const cards=[
@@ -440,6 +440,10 @@ const voiceProfiles=[
  {id:'anchen',folder:'taiwan-v1-anchen',label:'B｜男聲'},
  {id:'bowen',folder:'taiwan-v1-bowen',label:'C｜男聲'}
 ];
+const voiceStyleSamples=[
+ {id:'gentle-teacher',folder:'preview-gentle-teacher',label:'溫柔老師版'},
+ {id:'lively-story',folder:'preview-lively-story',label:'活潑說故事版'}
+];
 const voicePrefKey='tone-guard-voice';
 function loadVoicePreference(){
  try{return voiceProfiles.find(v=>v.id===localStorage.getItem(voicePrefKey))||voiceProfiles[0]}
@@ -485,7 +489,7 @@ function cancelVoicePreview(){
  if(job.fallback)window.speechSynthesis?.cancel();
 }
 function previewVoice(id){
- const profile=voiceProfiles.find(v=>v.id===id)||voiceProfile;
+ const profile=voiceProfiles.find(v=>v.id===id)||voiceStyleSamples.find(v=>v.id===id)||voiceProfile;
  unlockAudio();cancelVoicePreview();say('春天的春是幾聲？',undefined,profile,true);
 }
 function openGameVoice(){
@@ -518,7 +522,7 @@ function chooseVoice(id){
  const label=document.getElementById('voice-summary');if(label)label.textContent='🔊 試聽與選擇語音｜'+profile.label;
 }
 function voiceChooser(expanded=false){
- return `<details class="voice-chooser" ${expanded?'open':''}><summary id="voice-summary">🔊 試聽與選擇語音｜${voiceProfile.label}</summary>${voiceProfiles.map(v=>`<div class="voice-option"><b>${v.label}</b><button type="button" onclick="previewVoice('${v.id}')" aria-label="試聽${v.label}">▶ 試聽</button><button type="button" data-voice-select="${v.id}" onclick="chooseVoice('${v.id}')" aria-label="遊戲使用${v.label}" aria-pressed="${voiceProfile.id===v.id}">${voiceProfile.id===v.id?'使用中':'使用'}</button></div>`).join('')}<small class="voice-note">三個聲音都試聽同一句。「使用」會套用到題目與答題提示。</small></details>`
+ return `<details class="voice-chooser" ${expanded?'open':''}><summary id="voice-summary">🔊 試聽與選擇語音｜${voiceProfile.label}</summary>${voiceProfiles.map(v=>`<div class="voice-option"><b>${v.label}</b><button type="button" onclick="previewVoice('${v.id}')" aria-label="試聽${v.label}">▶ 試聽</button><button type="button" data-voice-select="${v.id}" onclick="chooseVoice('${v.id}')" aria-label="遊戲使用${v.label}" aria-pressed="${voiceProfile.id===v.id}">${voiceProfile.id===v.id?'使用中':'使用'}</button></div>`).join('')}${voiceStyleSamples.map(v=>`<div class="voice-option voice-style-option"><b>${v.label}</b><button type="button" onclick="previewVoice('${v.id}')" aria-label="試聽${v.label}">▶ 試聽</button></div>`).join('')}<small class="voice-note">兩個新版本先提供試聽。按「使用」可切換遊戲語音。</small></details>`
 }
 function announceTone(tone,onend){clearTimeout(toneVoiceTimer);if(!document.getElementById('game-voice-dialog'))stopVoice();let label=tones[tone-1].name.replace('塔','');toneVoiceTimer=setTimeout(()=>{if(audioOn&&state?.running&&!state.paused&&!state.result)say(label,onend);else onend?.()},140)}
 function playRecordedPrompt(card,id){unlockAudio();let enemy=state?.enemies.find(e=>e.id===id),token;if(enemy){enemy.promptToken=(enemy.promptToken||0)+1;token=enemy.promptToken;enemy.promptFinished=false;stopVoice()}say(questionText(card),()=>{let live=state?.enemies.find(e=>e.id===id);if(live&&live.promptToken===token){live.promptFinished=true;finishQuestionAction(live)}})}
